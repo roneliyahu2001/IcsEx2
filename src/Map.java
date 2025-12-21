@@ -8,6 +8,8 @@ import java.io.Serializable;
  */
 public class Map implements Map2D, Serializable{
 
+    private int[][] _map;
+
     // edit this class below
 	/**
 	 * Constructs a w*h 2D raster map with an init value v.
@@ -31,56 +33,89 @@ public class Map implements Map2D, Serializable{
 	}
 	@Override
 	public void init(int w, int h, int v) {
+        if (w <= 0 || h <= 0) {
+            throw new RuntimeException("Bad dimensions");
+        }
+        _map = new int[w][h];
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                _map[x][y] = v;
+            }
+        }
 
 	}
 	@Override
 	public void init(int[][] arr) {
+        if (arr == null || arr.length == 0 || arr[0] == null || arr[0].length == 0) {
+            throw new RuntimeException("Bad array");
+        }
+        int w = arr.length;
+        int h = arr[0].length;
+
+        for (int i = 0; i < w; i++) {
+            if (arr[i] == null || arr[i].length != h) {
+                throw new RuntimeException("Ragged array");
+            }
+        }
+
+        _map = new int[w][h];
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                _map[x][y] = arr[x][y];
+            }
+        }
 
 	}
 	@Override
 	public int[][] getMap() {
-		int[][] ans = null;
+        int w = getWidth();
+        int h = getHeight();
+        int[][] copy = new int[w][h];
 
-		return ans;
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                copy[x][y] = _map[x][y];
+            }
+        }
+        return copy;
 	}
+
 	@Override
 	public int getWidth() {
-        int ans = -1;
-
-        return ans;
+        return _map.length;
     }
+
 	@Override
 	public int getHeight() {
-        int ans = -1;
-
-        return ans;
+        return _map[0].length;
     }
+
 	@Override
 	public int getPixel(int x, int y) {
-        int ans = -1;
-
-        return ans;
+        return _map[x][y];
     }
+
 	@Override
 	public int getPixel(Pixel2D p) {
-        int ans = -1;
-
-        return ans;
+        return getPixel(p.getX(), p.getY());
 	}
+
 	@Override
 	public void setPixel(int x, int y, int v) {
-
+        _map[x][y] = v;
     }
+
 	@Override
 	public void setPixel(Pixel2D p, int v) {
-
+        setPixel(p.getX(), p.getY(), v);
 	}
 
     @Override
     public boolean isInside(Pixel2D p) {
-        boolean ans = true;
-
-        return ans;
+        if (p == null) return false;
+        int x = p.getX();
+        int y = p.getY();
+        return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
     }
 
     @Override
